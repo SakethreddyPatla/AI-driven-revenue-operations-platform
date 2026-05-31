@@ -36,7 +36,7 @@ The platform answers three core business questions:
 
 | Business Question | Solution |
 |---|---|
-| How is revenue trending quarter-over-quarter? | Star Schema + `mart_quarterly_revenue` |
+| How is revenue trending quarter-over-quarter? | Star Schema + `mart_quaterly_revenue` |
 | Which customers are most likely to buy next month? | BQML propensity model |
 | What does the data mean in plain English for executives? | Gemini `ML.GENERATE_TEXT` summaries |
 
@@ -147,7 +147,7 @@ revenue_ops/
 │   │   │   └── fct_customer_propensity_scores.sql
 │   │   └── finance/
 │   │       ├── schema.yml
-│   │       ├── mart_quarterly_revenue.sql
+│   │       ├── mart_quaterly_revenue.sql
 │   │       └── mart_revenue_ai_summaries.sql
 ├── tests/
 │   └── generic/
@@ -353,7 +353,7 @@ the dimension. This is the DRY (Don't Repeat Yourself) principle applied to SQL.
 (`18-24`, `25-34`, etc.) is computed once here rather than in every downstream
 query. One definition, enforced consistently everywhere.
 
-**Window functions for QoQ growth in `mart_quarterly_revenue`:**
+**Window functions for QoQ growth in `mart_quaterly_revenue`:**
 ```sql
 lag(total_revenue_usd) over (order by year, quarter) as prev_quarter_revenue_usd
 ```
@@ -655,7 +655,7 @@ on increased demand and further enhance margin capture."
 
 ### Run Commands
 ```powershell
-dbt run --select mart_quarterly_revenue
+dbt run --select mart_quaterly_revenue
 dbt run --select mart_revenue_ai_summaries
 ```
 
@@ -814,7 +814,7 @@ and ensures the model reflects real-world prediction conditions.
 | `fct_orders` | Table | 1 row per order | Core fact — revenue, margin, returns |
 | `ml_customer_features` | Table | 1 row per customer | RFM feature store for BQML |
 | `fct_customer_propensity_scores` | Table | 1 row per customer | BQML predictions + segments |
-| `mart_quarterly_revenue` | Table | 1 row per quarter | QoQ revenue with growth metrics |
+| `mart_quaterly_revenue` | Table | 1 row per quarter | QoQ revenue with growth metrics |
 | `mart_revenue_ai_summaries` | Table | 1 row per quarter | Gemini AI executive summaries |
 
 ---
@@ -885,7 +885,7 @@ To run the CI pipeline on your own fork:
 |---|---|
 | dbt project structure and best practices | All phases |
 | Star schema dimensional modeling | Phase 2 |
-| SQL window functions | `mart_quarterly_revenue` QoQ growth |
+| SQL window functions | `mart_quaterly_revenue` QoQ growth |
 | ML feature engineering + data leakage prevention | Phase 3 |
 | Class imbalance diagnosis and resolution | Phase 3 |
 | BigQuery ML model training and evaluation | Phase 3 |

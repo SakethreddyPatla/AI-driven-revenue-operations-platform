@@ -1,0 +1,64 @@
+name: dbt CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  dbt-test:
+    name: Run dbt Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt
+        run: |
+          pip install dbt-core dbt-bigquery
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up dbt profiles
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          revenue_ops:
+            target: ci
+            outputs:
+              ci:
+                type: bigquery
+                method: service-account
+                project: vernal-dispatch-496019-v9
+                dataset: revenue_ops_ci
+                threads: 4
+                timeout_seconds: 300
+                location: US
+                keyfile_json: ${{ secrets.GCP_SA_KEY }}
+          EOF
+
+      - name: dbt deps
+        run: dbt deps
+
+      - name: dbt build (compile + run + test)
+        run: dbt build --select staging marts.core
+        working-directory: .
+
+      - name: dbt docs generate
+        run: dbt docs generate
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dbt-docs
+          path: target/

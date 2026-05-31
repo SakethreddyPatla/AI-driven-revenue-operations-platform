@@ -1,0 +1,74 @@
+version: 2
+
+models:
+  - name: stg_thelook__orders
+    description: "Cleaned and renamed orders from the raw thelook source"
+    columns:
+      - name: order_id
+        description: "Primary key - unique identifier for each order"
+        tests:
+          - unique
+          - not_null
+
+      - name: user_id
+        description: "Foreign key to stg_thelook__users"
+        tests:
+          - not_null
+
+      - name: order_status
+        description: "Current status of the order"
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Complete', 'Cancelled', 'Returned',
+                       'Processing', 'Shipped']
+
+  - name: stg_thelook__order_items
+    description: "Cleaned and renamed order line items"
+    columns:
+      - name: order_item_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Foreign key to stg_thelook__orders"
+        tests:
+          - not_null
+      - name: item_sale_price_usd
+        description: "Sale price must be positive"
+        tests:
+          - not_null
+
+  - name: stg_thelook__users
+    description: "Cleaned and renamed user records"
+    columns:
+      - name: user_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: email
+        description: "User email address"
+        tests:
+          
+          - not_null
+
+  - name: stg_thelook__products
+    description: "Cleaned and renamed product catalog"
+    columns:
+      - name: product_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_thelook__inventory_items
+    description: "Cleaned inventory records with cost data"
+    columns:
+      - name: inventory_item_id
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null

@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: mart_quaterly_revenue
+    description: >
+      Quarterly revenue aggregation with QoQ growth metrics.
+      Primary input for executive reporting and the Gemini
+      AI summary pipeline.
+    columns:
+      - name: quarter_label
+        description: "Primary key - e.g. Q1 2022"
+        tests:
+          - unique
+          - not_null
+      - name: total_revenue_usd
+        description: "Total revenue for the quarter"
+        tests:
+          - not_null
+      - name: avg_margin_pct
+        description: "Average margin percentage"
+        tests:
+          - not_null
+
+  - name: mart_revenue_ai_summaries
+    description: >
+      AI-generated executive summaries per quarter using
+      Gemini via ML.GENERATE_TEXT. Each row contains the
+      full quarterly metrics plus a 3-sentence LLM narrative
+      with one actionable recommendation.
+    columns:
+      - name: quarter_label
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: ai_business_summary
+        description: "Gemini-generated executive summary"
+        tests:
+          - not_null

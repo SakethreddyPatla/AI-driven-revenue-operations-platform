@@ -1,0 +1,23 @@
+version: 2
+
+sources:
+  - name: thelook
+    database: bigquery-public-data 
+    schema: thelook_ecommerce
+    description: "Raw Thelook eCommerce public dataset from BigQuery"
+
+    tables:
+      - name: orders
+        description: "One row per order placed"
+      - name: order_items
+        description: "One row per line item within an order"
+      - name: users
+        description: "One row per registered user"
+      - name: products
+        description: "One row per product in the catalog"
+      - name: inventory_items
+        description: "One row per inventory item"
+      - name: events
+        description: "Clickstream / behavioural events"
+      - name: distribution_centers
+        description: "Distribution Centers Table"

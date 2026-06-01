@@ -11,6 +11,11 @@ jobs:
     name: Run dbt Tests
     runs-on: ubuntu-latest
 
+  
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -24,11 +29,16 @@ jobs:
         run: |
           pip install dbt-core dbt-bigquery
 
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v1
+      # 2. CHANGED: Swapped credentials_json for Workload Identity parameters
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          
+          workload_identity_provider: 'projects/vernal-dispatch-496019-v9/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'dbt-cicd-runner@vernal-dispatch-496019-v9.iam.gserviceaccount.com'
 
+      
       - name: Set up dbt profiles
         run: |
           mkdir -p ~/.dbt
@@ -38,13 +48,12 @@ jobs:
             outputs:
               ci:
                 type: bigquery
-                method: service-account
+                method: application-default
                 project: vernal-dispatch-496019-v9
                 dataset: revenue_ops_ci
                 threads: 4
                 timeout_seconds: 300
                 location: US
-                keyfile_json: ${{ secrets.GCP_SA_KEY }}
           EOF
 
       - name: dbt deps

@@ -48,7 +48,7 @@ jobs:
             outputs:
               ci:
                 type: bigquery
-                method: application-default
+                method: oauth
                 project: vernal-dispatch-496019-v9
                 dataset: revenue_ops_ci
                 threads: 4

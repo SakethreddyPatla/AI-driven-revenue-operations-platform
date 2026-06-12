@@ -162,11 +162,6 @@ revenue_ops/
 
 ## Setup & Installation
 
-### Prerequisites
-- Google Cloud account with billing enabled
-- VSCode
-- Windows PowerShell (this project was built on Windows 10)
-
 ### Step 1 — Install uv (Python package manager)
 
 We use `uv` over traditional pip/venv because it is significantly faster,
